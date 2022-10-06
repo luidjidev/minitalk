@@ -6,7 +6,7 @@
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 14:59:27 by luisfern          #+#    #+#             */
-/*   Updated: 2022/10/04 15:14:20 by luisfern         ###   ########.fr       */
+/*   Updated: 2022/10/06 19:12:28 by luisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,23 @@
 #include <unistd.h>
 #include "ft_printf/includes/ft_printf.h"
 
-void	run_client(int pid, char *message)
-{
-	
-}
-
 int	main(int ac, char **av)
 {
-	ft_printf("pid?");
-	run_client(pid, message);
+	// if (ac != 3 || !ft_isdigit(ft_atoi(av[1])))
+	// {
+	// 	ft_printf("Invalid CLI Arguments\n");
+	// 	ft_printf("Expected ./client [PDI] [Message]\n");
+	// 	return (0);
+		
+	// }
+	char c = 'o';
+	char bin[16];
+	int i = 0;
+	while (i <= 8)
+	{
+		bin[i] = c % 2;
+		c /= 2;
+		i++;
+	}
+	printf("%s", bin);
 }
