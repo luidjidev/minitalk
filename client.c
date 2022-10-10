@@ -6,31 +6,46 @@
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 14:59:27 by luisfern          #+#    #+#             */
-/*   Updated: 2022/10/06 19:12:28 by luisfern         ###   ########.fr       */
+/*   Updated: 2022/10/10 17:03:18 by luisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include <signal.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include "ft_printf/includes/ft_printf.h"
 
+void	send_msg(int pid, char *msg)
+{
+	int	index;
+	int temp;
+	char c;
+	
+	index = 0;
+	temp = 0;
+	while (msg[index])
+	{
+		c = msg[index];
+		while(c != 0)
+		{
+			temp = c % 2;
+			if (temp == 0)
+				kill(pid, SIGUSR1);
+			else
+				kill(pid, SIGUSR2);
+			c /= 2;
+		}
+		index++;
+	}
+}
+
 int	main(int ac, char **av)
 {
-	// if (ac != 3 || !ft_isdigit(ft_atoi(av[1])))
-	// {
-	// 	ft_printf("Invalid CLI Arguments\n");
-	// 	ft_printf("Expected ./client [PDI] [Message]\n");
-	// 	return (0);
-		
-	// }
-	char c = 'o';
-	char bin[16];
-	int i = 0;
-	while (i <= 8)
+	if (ac != 3 || ft_isdigit(ft_atoi(av[1])))
 	{
-		bin[i] = c % 2;
-		c /= 2;
-		i++;
+		ft_printf("Invalid CLI Arguments\n", ac);
+		ft_printf("Expected ./client [PDI] [Message]\n");
+		return (0);
 	}
-	printf("%s", bin);
+	send_msg(ft_atoi(av[1]), (unsigned char *)av[2]);
 }
