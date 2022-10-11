@@ -6,12 +6,11 @@
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 14:59:27 by luisfern          #+#    #+#             */
-/*   Updated: 2022/10/10 17:03:18 by luisfern         ###   ########.fr       */
+/*   Updated: 2022/10/11 15:47:24 by luisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
-#include <sys/types.h>
 #include <unistd.h>
 #include "ft_printf/includes/ft_printf.h"
 
@@ -31,7 +30,7 @@ void	send_msg(int pid, char *msg)
 			temp = c % 2;
 			if (temp == 0)
 				kill(pid, SIGUSR1);
-			else
+			else if (temp == 1)
 				kill(pid, SIGUSR2);
 			c /= 2;
 		}
@@ -41,11 +40,11 @@ void	send_msg(int pid, char *msg)
 
 int	main(int ac, char **av)
 {
-	if (ac != 3 || ft_isdigit(ft_atoi(av[1])))
+	if (ac != 3)
 	{
 		ft_printf("Invalid CLI Arguments\n", ac);
 		ft_printf("Expected ./client [PDI] [Message]\n");
 		return (0);
 	}
-	send_msg(ft_atoi(av[1]), (unsigned char *)av[2]);
+	send_msg(ft_atoi(av[1]), av[2]);
 }
