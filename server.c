@@ -1,49 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.c                                           :+:      :+:    :+:   */
+/*   server2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/04 14:45:09 by luisfern          #+#    #+#             */
-/*   Updated: 2022/10/11 15:49:05 by luisfern         ###   ########.fr       */
+/*   Created: 2022/10/14 12:27:54 by luisfern          #+#    #+#             */
+/*   Updated: 2022/10/14 12:34:35 by luisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
-#include <unistd.h>
 #include "ft_printf/includes/ft_printf.h"
 
-void	receive_msg(int signal)
+static void handler(int signal, siginfo_t *info, void *context)
 {
-	static int		index;
-	static char		byte[8];
-
-	if (signal == SIGUSR1)
+	static int				i = 0;
+	static unsigned char	c = 0;
+	
+	(void)context;
+	c |= (signal == SIGUSR2);
+	if (++i == 8)
 	{
-		byte[index] = 0;
+		i = 0;
+		ft_printf("%c", c);
+		c = 0;
 	}
-	else if (signal == SIGUSR2)
-	{
-		byte[index] = 1;
-	}
-	index++;
-	if (index == 7)
-	{
-		// conversion_to_decimal(byte);
-		ft_printf("%s", byte);
-		index = 0;
-	}
+	else
+		c <<= 1;
 }
 
 int	main(void)
 {
-	ft_printf("PID - %i\n", getpid());
-	while (1 == 1)
-	{
-		signal(SIGUSR1, receive_msg);
-		signal(SIGUSR2, receive_msg);
+	struct sigaction sa;
+	
+	ft_printf("PID: %i\n", getpid());
+	sa.sa_sigaction = handler;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sa, 0);
+	sigaction(SIGUSR2, &sa, 0);
+	while (1)
 		pause();
-	}
 	return (0);
 }

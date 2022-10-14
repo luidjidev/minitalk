@@ -1,40 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/04 14:59:27 by luisfern          #+#    #+#             */
-/*   Updated: 2022/10/11 15:47:24 by luisfern         ###   ########.fr       */
+/*   Created: 2022/10/14 12:34:50 by luisfern          #+#    #+#             */
+/*   Updated: 2022/10/14 12:53:45 by luisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
-#include <unistd.h>
 #include "ft_printf/includes/ft_printf.h"
 
-void	send_msg(int pid, char *msg)
+static void	handler(int sig)
 {
-	int	index;
-	int temp;
-	char c;
-	
-	index = 0;
-	temp = 0;
-	while (msg[index])
+	static int	received = 0;
+
+	if (sig == SIGUSR1)
+		++received;
+	else
 	{
-		c = msg[index];
-		while(c != 0)
+		ft_putnbr_fd(received, 1);
+		ft_putchar_fd('\n', 1);
+		exit(0);
+	}
+}
+
+static void	send_msg(int pid, char *str)
+{
+	int		i;
+	char	c;
+
+	while (*str)
+	{
+		i = 8;
+		c = *str++;
+		while (i--)
 		{
-			temp = c % 2;
-			if (temp == 0)
-				kill(pid, SIGUSR1);
-			else if (temp == 1)
-				kill(pid, SIGUSR2);
-			c /= 2;
+			if (c >> i & 1)
+				kill (pid, SIGUSR2);
+			else
+				kill (pid, SIGUSR1);
+			usleep(100);
 		}
-		index++;
+	}
+	i = 8;
+	while (i--)
+	{
+		kill(pid, SIGUSR1);
+		usleep(100);
 	}
 }
 
@@ -42,9 +57,11 @@ int	main(int ac, char **av)
 {
 	if (ac != 3)
 	{
-		ft_printf("Invalid CLI Arguments\n", ac);
-		ft_printf("Expected ./client [PDI] [Message]\n");
+		ft_printf("Error!\nExpected ./client [PID] [Message]\n");
 		return (0);
 	}
+	signal(SIGUSR1, handler);
+	signal(SIGUSR2, handler);
 	send_msg(ft_atoi(av[1]), av[2]);
+	return (0);
 }
