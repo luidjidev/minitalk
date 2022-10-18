@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client2.c                                          :+:      :+:    :+:   */
+/*   client.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,20 +12,6 @@
 
 #include <signal.h>
 #include "ft_printf/includes/ft_printf.h"
-
-static void	handler(int sig)
-{
-	static int	received = 0;
-
-	if (sig == SIGUSR1)
-		++received;
-	else
-	{
-		ft_putnbr_fd(received, 1);
-		ft_putchar_fd('\n', 1);
-		exit(0);
-	}
-}
 
 static void	send_msg(int pid, char *str)
 {
@@ -60,8 +46,6 @@ int	main(int ac, char **av)
 		ft_printf("Error!\nExpected ./client [PID] [Message]\n");
 		return (0);
 	}
-	signal(SIGUSR1, handler);
-	signal(SIGUSR2, handler);
 	send_msg(ft_atoi(av[1]), av[2]);
 	return (0);
 }

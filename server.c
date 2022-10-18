@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server2.c                                          :+:      :+:    :+:   */
+/*   server.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -19,6 +19,8 @@ static void handler(int signal, siginfo_t *info, void *context)
 	static unsigned char	c = 0;
 	
 	(void)context;
+	if (info->si_errno != 0)
+		return ;
 	c |= (signal == SIGUSR2);
 	if (++i == 8)
 	{
@@ -33,7 +35,7 @@ static void handler(int signal, siginfo_t *info, void *context)
 int	main(void)
 {
 	struct sigaction sa;
-	
+
 	ft_printf("PID: %i\n", getpid());
 	sa.sa_sigaction = handler;
 	sa.sa_flags = SA_SIGINFO;
