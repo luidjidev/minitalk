@@ -24,7 +24,7 @@ static void	send_msg(int pid, char *str)
 		c = *str++;
 		while (i--)
 		{
-			if (c >> i & 1)
+			if ((c >> i) & 1)
 				kill (pid, SIGUSR2);
 			else
 				kill (pid, SIGUSR1);

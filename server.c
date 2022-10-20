@@ -13,35 +13,35 @@
 #include <signal.h>
 #include "ft_printf/includes/ft_printf.h"
 
-static void handler(int signal, siginfo_t *info, void *context)
+int	g_bit = 128;
+
+void	handler_sig(int signal)
 {
-	static int				i = 0;
-	static unsigned char	c = 0;
-	
-	(void)context;
-	if (info->si_errno != 0)
-		return ;
-	c |= (signal == SIGUSR2);
-	if (++i == 8)
+	static int	i;
+	static int	carater;
+
+	if (signal == SIGUSR2)
 	{
-		i = 0;
-		ft_printf("%c", c);
-		c = 0;
+		carater += g_bit;
+		g_bit /= 2;
 	}
 	else
-		c <<= 1;
+		g_bit /= 2;
+	i++;
+	if (i == 8)
+	{
+		ft_printf("%c", carater);
+		i = 0;
+		carater = 0;
+		g_bit = 128;
+	}
 }
 
 int	main(void)
 {
-	struct sigaction sa;
-
-	ft_printf("PID: %i\n", getpid());
-	sa.sa_sigaction = handler;
-	sa.sa_flags = SA_SIGINFO;
-	sigaction(SIGUSR1, &sa, 0);
-	sigaction(SIGUSR2, &sa, 0);
+	ft_printf("PID: %d\n", getpid());
+	signal(SIGUSR1, handler_sig);
+	signal(SIGUSR2, handler_sig);
 	while (1)
 		pause();
-	return (0);
 }

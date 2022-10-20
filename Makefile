@@ -6,50 +6,46 @@
 #    By: luisfern <luisfern@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/18 14:36:04 by luisfern          #+#    #+#              #
-#    Updated: 2022/10/18 15:37:18 by luisfern         ###   ########.fr        #
+#    Updated: 2022/10/20 15:27:13 by luisfern         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+CLIENT = client
+SERVER = server
 
-NAME1 = client
-NAME2 = server
-PRINTF_LIB = libftprintf.a
-PRINTF_DIR = ft_printf/
-CC = cc
-CFLAGS = -Wall -Werror -Wextra
-RM = rm -f
-AR = ar rcs
+FILE_S = server.c
+FILE_C = client.c
 
-#Source Files
+EXE_S = server
+EXE_C = client
 
-SRC_FILES = client server
+PRINTF = ft_printf/libftprintf.a
 
-SRC = $(addsuffix .c, $(SRC_FILES))
-OBJ = client server
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+RM = rm -rf
 
-###
+all: $(CLIENT) $(SERVER)
 
-OBJF = .cache_exists
+$(CLIENT): $(PRINTF)
+		@ $(CC) $(CFLAGS) $(FILE_C) $(PRINTF) -o $(CLIENT)
+		@ echo client ready.
 
-all: $(NAME1) $(NAME2)
+$(SERVER): $(PRINTF)
+		@ $(CC) $(CFLAGS) $(FILE_S) $(PRINTF) -o $(SERVER)
+		@ echo server ready.
 
-$(NAME1):
-		make -C ft_printf/
-		cp ft_printf/libftprintf.a .
-		$(CC) $(CFLAGS) -o client client.c libftprintf.a
-
-$(NAME2):
-		make -C ft_printf/
-		cp ft_printf/libftprintf.a .
-		$(CC) $(CFLAGS) -o server server.c libftprintf.a
+$(PRINTF): 
+		@ make -C ft_printf/
+		@ cp ft_printf/libftprintf.a .
 
 clean: 
-	rm -rf $(NAME1) $(NAME2)
+		@ $(RM) $(CLIENT) $(SERVER)
+		@ echo client n server deleted.
 
-fclean:
-	rm -rf $(NAME1) $(NAME2) $(PRINTF_LIB)
-	make fclean -C ft_printf/
-
+fclean: clean
+		@ $(RM) libftprintf.a
+		@ echo all deleted.
+		
 re: fclean all
-
-.PHONY: all clean fclean re
+		@ echo recompiling
